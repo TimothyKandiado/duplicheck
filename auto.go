@@ -26,15 +26,7 @@ func keepRecentFile(duplicates fileList) {
 		}
 	}
 
-	for index, filePath := range duplicates {
-		if index == recentIndex {
-			fmt.Println("Keeping: ", filePath)
-			continue
-		}
-
-		fmt.Println("Deleting: ", filePath)
-		deleteFile(filePath)
-	}
+	deleteDuplicates(duplicates, recentIndex)
 }
 
 func keepShortestPath(duplicates fileList) {
@@ -48,13 +40,5 @@ func keepShortestPath(duplicates fileList) {
 		}
 	}
 
-	for index, filepath := range duplicates {
-		if index == shortestIndex {
-			fmt.Printf("Keeping: %v\n", filepath)
-			continue
-		}
-
-		fmt.Printf("Deleting: %v\n", filepath)
-		deleteFile(filepath)
-	}
+	deleteDuplicates(duplicates, shortestIndex)
 }

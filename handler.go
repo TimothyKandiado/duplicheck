@@ -89,8 +89,12 @@ func deleteDuplicateManually(duplicates fileList) {
 		return
 	}
 
+	deleteDuplicates(duplicates, selection)
+}
+
+func deleteDuplicates(duplicates fileList, excludeIndex int) {
 	for index, filePath := range duplicates {
-		if index == selection {
+		if index == excludeIndex {
 			fmt.Println("Keeping: ", filePath)
 			continue
 		}
