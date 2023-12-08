@@ -1,0 +1,60 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"time"
+)
+
+func keepRecentFile(duplicates fileList) {
+	var recentTime time.Time = time.Date(2000, time.January, 1, 1, 1, 1, 1, time.Local)
+	var recentIndex int
+
+	for index, filePath := range duplicates {
+		fileInfo, err := os.Stat(filePath)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		time := fileInfo.ModTime()
+
+		if time.Compare(recentTime) >= 0 {
+			recentTime = time
+			recentIndex = index
+		}
+	}
+
+	for index, filePath := range duplicates {
+		if index == recentIndex {
+			fmt.Println("Keeping: ", filePath)
+			continue
+		}
+
+		fmt.Println("Deleting: ", filePath)
+		deleteFile(filePath)
+	}
+}
+
+func keepShortestPath(duplicates fileList) {
+	var shortestIndex int = 0
+	var shortestLength int = 1000000
+
+	for index, filePath := range duplicates {
+		if len(filePath) < shortestLength {
+			shortestIndex = index
+			shortestLength = len(filePath)
+		}
+	}
+
+	for index, filepath := range duplicates {
+		if index == shortestIndex {
+			fmt.Printf("Keeping: %v\n", filepath)
+			continue
+		}
+
+		fmt.Printf("Deleting: %v\n", filepath)
+		deleteFile(filepath)
+	}
+}
