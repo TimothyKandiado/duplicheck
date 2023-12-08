@@ -7,7 +7,7 @@ manual selection also possible
 
 # Usage
 
-duplicheck <folder1> <folder2> <folder3> ...
+duplicheck [folder1] [folder2] [folder3] ...
 
 example:
 duplicheck H:\Videos
