@@ -1,12 +1,12 @@
 package main
 
 import (
-	"crypto/md5"
+	"crypto/sha1"
 	"fmt"
 	"os"
 )
 
-type HashCode [16]byte
+type HashCode [20]byte
 
 var duplicatesByHash []FileList
 
@@ -48,14 +48,14 @@ func findDuplicateByHashFiles() {
 	duplicateFiles = duplicatesByHash
 }
 
-func hashFile(path string) ([16]byte, error) {
+func hashFile(path string) (HashCode, error) {
 	data, err := os.ReadFile(path)
 
 	if err != nil {
-		return [16]byte{}, err
+		return [20]byte{}, err
 	}
 
-	hash := md5.Sum(data)
+	hash := sha1.Sum(data)
 
 	return hash, nil
 }
