@@ -3,21 +3,21 @@ package main
 
 import (
 	"bufio"
-	"crypto/sha256"
 	"fmt"
+	"hash/adler32"
 	"os"
 	"strings"
 )
 
-type hashCode [32]byte
+// type hashCode uint32
 type fileList []string
 
-var files map[hashCode]fileList
+var files map[uint32]fileList
 var duplicateFiles []fileList
 
 func main() {
 	fmt.Println("Starting duplicheck....")
-	files = make(map[hashCode]fileList)
+	files = make(map[uint32]fileList)
 
 	args := os.Args
 
@@ -81,14 +81,14 @@ func searchDuplicateFiles(path string) {
 
 }
 
-func hashFile(path string) (hashCode, error) {
+func hashFile(path string) (uint32, error) {
 	data, err := os.ReadFile(path)
 
 	if err != nil {
-		return [32]byte{}, err
+		return 0, err
 	}
 
-	hash := sha256.Sum256(data)
+	hash := adler32.Checksum(data)
 
 	return hash, nil
 }
