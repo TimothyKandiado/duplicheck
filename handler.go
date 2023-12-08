@@ -15,7 +15,7 @@ const (
 	ShortestPath
 )
 
-func autoDuplicateHandler(duplicateFiles []fileList) {
+func autoDuplicateHandler(duplicateFiles []FileList) {
 	fmt.Println("Automatic mode")
 	fmt.Println("Choose automatic settings")
 	fmt.Println("0 to keep most recent file\n1 to keep shortest file path")
@@ -53,13 +53,13 @@ func autoDuplicateHandler(duplicateFiles []fileList) {
 	}
 }
 
-func manualDuplicateHandler(duplicateFiles []fileList) {
+func manualDuplicateHandler(duplicateFiles []FileList) {
 	for _, duplicates := range duplicateFiles {
 		deleteDuplicateManually(duplicates)
 	}
 }
 
-func deleteDuplicateManually(duplicates fileList) {
+func deleteDuplicateManually(duplicates FileList) {
 	fmt.Println("\nSelect file to keep")
 
 	for index, filePath := range duplicates {
@@ -92,7 +92,7 @@ func deleteDuplicateManually(duplicates fileList) {
 	deleteDuplicates(duplicates, selection)
 }
 
-func deleteDuplicates(duplicates fileList, excludeIndex int) {
+func deleteDuplicates(duplicates FileList, excludeIndex int) {
 	for index, filePath := range duplicates {
 		if index == excludeIndex {
 			fmt.Println("Keeping: ", filePath)

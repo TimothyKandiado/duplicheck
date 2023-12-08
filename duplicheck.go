@@ -4,20 +4,20 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"hash/adler32"
 	"os"
 	"strings"
 )
 
-// type hashCode uint32
-type fileList []string
+type FileList []string
 
-var files map[uint32]fileList
-var duplicateFiles []fileList
+var duplicateFiles []FileList
+
+func init() {
+	duplicateFiles = make([]FileList, 0)
+}
 
 func main() {
 	fmt.Println("Starting duplicheck....")
-	files = make(map[uint32]fileList)
 
 	args := os.Args
 
@@ -38,7 +38,8 @@ func main() {
 		searchDuplicateFiles(path)
 	}
 
-	isolateDuplicateFiles()
+	isolateDuplicateBySizeFiles()
+	findDuplicateByHashFiles()
 	handleDuplicateFiles()
 
 	fmt.Println("Exiting duplicheck....")
@@ -54,24 +55,8 @@ func searchDuplicateFiles(path string) {
 	for _, dir := range directories {
 		filepath := fmt.Sprintf("%v/%v", path, dir.Name())
 		if !dir.IsDir() {
-			hash, err := hashFile(filepath)
+			groupFileBySize(filepath)
 
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
-
-			value, exists := files[hash]
-
-			if exists {
-				// fmt.Printf("duplicate found: %v\n", filepath)
-				value = append(value, filepath) // add duplicate file to hash code
-				files[hash] = value
-			} else {
-				files[hash] = []string{filepath}
-			}
-
-			//fmt.Println(dir.Name(), " _ File _ Hash: ", hash)
 			continue
 		}
 
@@ -79,28 +64,6 @@ func searchDuplicateFiles(path string) {
 		searchDuplicateFiles(filepath)
 	}
 
-}
-
-func hashFile(path string) (uint32, error) {
-	data, err := os.ReadFile(path)
-
-	if err != nil {
-		return 0, err
-	}
-
-	hash := adler32.Checksum(data)
-
-	return hash, nil
-}
-
-func isolateDuplicateFiles() {
-	duplicateFiles = make([]fileList, 0)
-	for _, list := range files {
-		if len(list) > 1 {
-			//fmt.Println(list)
-			duplicateFiles = append(duplicateFiles, list)
-		}
-	}
 }
 
 func handleDuplicateFiles() {
