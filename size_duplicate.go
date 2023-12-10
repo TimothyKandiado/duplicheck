@@ -18,6 +18,7 @@ func groupFileBySize(path string) {
 
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	fileSize := fileInfo.Size()

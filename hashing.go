@@ -23,6 +23,7 @@ func findDuplicateByHashFiles() {
 			hash, err := hashFile(filepath)
 
 			if err != nil {
+				fmt.Println(err)
 				continue
 			}
 
@@ -52,6 +53,7 @@ func hashFile(path string) (HashCode, error) {
 	data, err := os.ReadFile(path)
 
 	if err != nil {
+		fmt.Println(err)
 		return [20]byte{}, err
 	}
 
