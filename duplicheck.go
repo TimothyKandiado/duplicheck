@@ -8,24 +8,21 @@ import (
 	"strings"
 )
 
-type FileList []string
-
-var duplicateFiles []FileList
-
-func init() {
-	duplicateFiles = make([]FileList, 0)
-}
+type FileList []string // List of strings (file paths to be precise)
 
 func main() {
 	fmt.Println("Starting duplicheck....")
 
 	args := os.Args
 
+	// Map with file size as key, and slice of file names as value
+	filesGroupedBySize := make(map[int64]FileList)
+
 	if len(args) > 1 {
 		paths := args[1:]
 
 		for _, path := range paths {
-			searchDuplicateFiles(path)
+			searchPotentialDuplicateFiles(path, filesGroupedBySize)
 		}
 	} else {
 		path, err := os.Getwd()
@@ -35,17 +32,19 @@ func main() {
 			return
 		}
 
-		searchDuplicateFiles(path)
+		searchPotentialDuplicateFiles(path, filesGroupedBySize)
 	}
 
-	isolateDuplicateBySizeFiles()
-	findDuplicateByHashFiles()
-	handleDuplicateFiles()
+	sameSizeFiles := groupFilesWithSameSize(filesGroupedBySize)
+
+	duplicateFiles := findDuplicateFilesByHash(sameSizeFiles)
+
+	handleDuplicateFiles(duplicateFiles)
 
 	fmt.Println("Exiting duplicheck....")
 }
 
-func searchDuplicateFiles(path string) {
+func searchPotentialDuplicateFiles(path string, filesGroupedBySize map[int64]FileList) {
 	directories, err := os.ReadDir(path)
 	if err != nil {
 		fmt.Println(err)
@@ -55,18 +54,17 @@ func searchDuplicateFiles(path string) {
 	for _, dir := range directories {
 		filepath := fmt.Sprintf("%v/%v", path, dir.Name())
 		if !dir.IsDir() {
-			groupFilesBySize(filepath)
+			groupFilesBySize(filepath, filesGroupedBySize)
 
 			continue
 		}
 
 		//fmt.Println(dir.Name(), "_ Folder _")
-		searchDuplicateFiles(filepath)
+		searchPotentialDuplicateFiles(filepath, filesGroupedBySize)
 	}
-
 }
 
-func handleDuplicateFiles() {
+func handleDuplicateFiles(duplicateFiles []FileList) {
 	if len(duplicateFiles) == 0 {
 		fmt.Println("No duplicates were found")
 		return
@@ -91,7 +89,7 @@ func handleDuplicateFiles() {
 		manualDuplicateHandler(duplicateFiles)
 	} else {
 		fmt.Println("Invalid Selection")
-		handleDuplicateFiles()
+		handleDuplicateFiles(duplicateFiles)
 	}
 
 }

@@ -5,15 +5,7 @@ import (
 	"os"
 )
 
-var duplicatesBySize []FileList
-var filesGroupedBySize map[int64]FileList
-
-func init() {
-	filesGroupedBySize = make(map[int64]FileList)
-	duplicatesBySize = make([]FileList, 0)
-}
-
-func groupFilesBySize(path string) {
+func groupFilesBySize(path string, filesGroupedBySize map[int64]FileList) {
 	fileInfo, err := os.Stat(path)
 
 	if err != nil {
@@ -34,14 +26,16 @@ func groupFilesBySize(path string) {
 }
 
 // Groups files based on whether they have the same file size
-func isolateDuplicateBySizeFiles() {
+func groupFilesWithSameSize(filesGroupedBySize map[int64]FileList) []FileList {
+	sameSizeFiles := make([]FileList, 0)
 	for _, fileList := range filesGroupedBySize {
 		if len(fileList) < 2 {
 			continue
 		}
 
-		duplicatesBySize = append(duplicatesBySize, fileList)
+		sameSizeFiles = append(sameSizeFiles, fileList)
 	}
 
-	fmt.Printf("Found %d group of files with same size\n", len(duplicatesBySize))
+	fmt.Printf("Found %d group of files with same size\n", len(sameSizeFiles))
+	return sameSizeFiles
 }

@@ -8,17 +8,15 @@ import (
 
 type HashCode [20]byte
 
-var duplicatesByHash []FileList
+// goes through the 2D array of files with similar sizes,
+// calculates their hash, then groups the files with the same hash
+func findDuplicateFilesByHash(sameSizeFiles []FileList) []FileList {
+	duplicatesByHash := make([]FileList, 0)
 
-func init() {
-	duplicatesByHash = make([]FileList, 0)
-}
-
-func findDuplicateByHashFiles() {
-	for _, files := range duplicatesBySize {
+	for _, files := range sameSizeFiles {
 		hashDuplicateWithSameSize := make(map[HashCode]FileList)
 
-		// group hash duplicates with same size
+		// group files by their hash value
 		for _, filepath := range files {
 			hash, err := hashFile(filepath)
 
@@ -36,7 +34,7 @@ func findDuplicateByHashFiles() {
 			}
 		}
 
-		// isolate and store files with duplicates
+		// isolate duplicate files
 		for _, files := range hashDuplicateWithSameSize {
 			if len(files) < 2 {
 				continue
@@ -45,8 +43,10 @@ func findDuplicateByHashFiles() {
 			duplicatesByHash = append(duplicatesByHash, files)
 		}
 	}
+
 	fmt.Printf("Found %d group of files with same hash\n", len(duplicatesByHash))
-	duplicateFiles = duplicatesByHash
+
+	return duplicatesByHash
 }
 
 func hashFile(path string) (HashCode, error) {
