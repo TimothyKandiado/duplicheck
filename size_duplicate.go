@@ -13,7 +13,7 @@ func init() {
 	duplicatesBySize = make([]FileList, 0)
 }
 
-func groupFileBySize(path string) {
+func groupFilesBySize(path string) {
 	fileInfo, err := os.Stat(path)
 
 	if err != nil {
@@ -33,6 +33,7 @@ func groupFileBySize(path string) {
 	}
 }
 
+// Groups files based on whether they have the same file size
 func isolateDuplicateBySizeFiles() {
 	for _, fileList := range filesGroupedBySize {
 		if len(fileList) < 2 {

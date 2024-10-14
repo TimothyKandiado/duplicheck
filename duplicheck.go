@@ -55,7 +55,7 @@ func searchDuplicateFiles(path string) {
 	for _, dir := range directories {
 		filepath := fmt.Sprintf("%v/%v", path, dir.Name())
 		if !dir.IsDir() {
-			groupFileBySize(filepath)
+			groupFilesBySize(filepath)
 
 			continue
 		}
